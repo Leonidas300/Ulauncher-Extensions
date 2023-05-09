@@ -35,7 +35,7 @@ class CurrencyConverterExtension(Extension):
            #'symbols': '%s,%s' % (from_currency, to_currency)
         #}		
         payload = {}
-        headers= {"apikey": self.preferences['api_key']}#"XE1CTWXoI4JF8tELn9j3f3fOaSc1ZH9K"
+        headers= {"apikey": self.preferences['api_key']}#
         url = CONVERTER_API_BASE_URL.replace(';from;',from_currency).replace(';to;',to_currency)#.replace('amount',amount)
         #print(params)
         #r = requests.get("%s/latest" % CONVERTER_API_BASE_URL, params=params)
