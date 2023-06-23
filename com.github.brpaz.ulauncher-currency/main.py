@@ -14,7 +14,7 @@ from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAct
 
 LOGGER = logging.getLogger(__name__)
 
-CONVERTER_API_BASE_URL = "https://api.apilayer.com/fixer/convert?to=;to;&from=;from;&amount=1"#'http://data.fixer.io/api'
+CONVERTER_API_BASE_URL = "http://data.fixer.io/api/latest?access_key=;access;&to=;to;&from=;from;&amount=1"#"https://api.apilayer.com/fixer/convert?to=;to;&from=;from;&amount=1"#'http://data.fixer.io/api'
 REGEX = r"(\d+\.?\d*)\s*([a-zA-Z]{3})\s(to|in)\s([a-zA-Z]{3})"
 
 
@@ -35,11 +35,12 @@ class CurrencyConverterExtension(Extension):
            #'symbols': '%s,%s' % (from_currency, to_currency)
         #}		
         payload = {}
-        headers= {"apikey": self.preferences['api_key']}#
-        url = CONVERTER_API_BASE_URL.replace(';from;',from_currency).replace(';to;',to_currency)#.replace('amount',amount)
+        #headers= {"apikey": self.preferences['api_key']}#
+        url = CONVERTER_API_BASE_URL.replace(';from;',from_currency).replace(';to;',to_currency).replace(";access;", self.preferences['api_key'])#.replace('amount',amount)
+        print(url)
         #print(params)
         #r = requests.get("%s/latest" % CONVERTER_API_BASE_URL, params=params)
-        r = requests.request("GET", url, headers=headers, data = payload)        
+        r = requests.request("GET", url)#, headers=headers, data = payload)        
         response = r.json()
 
         if r.status_code != 200:
@@ -51,7 +52,7 @@ class CurrencyConverterExtension(Extension):
 
         # Calculate the amount from the conversion rates.
         # Fixer.io base Currency is Eur.
-        rates = response['info']['rate']
+        rates = list(response["rates"].values())[0]#response['info']['rate']
 
         result = float(amount) * float(rates)# / float(from_currency)) * float(to_currency)
 
